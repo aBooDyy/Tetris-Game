@@ -1,0 +1,126 @@
+.background-color {
+    -fx-background-color: #1f1f1f;
+}
+
+.player-name-field {
+  -fx-min-width: 180px;
+  -fx-min-height: 35px;
+  -fx-background-radius: 0;
+}
+
+.play-button {
+  -fx-background-color: linear-gradient(to right, rgba(9,212,238, 0.8), rgba(9,212,238, 0.5),
+  rgba(9,212,238, 0.4), rgba(9,212,238, 0.5), rgba(9,212,238, 0.8));
+  -fx-background-radius: 0;
+  -fx-max-width: 140px;
+  -fx-text-fill: white;
+  -fx-font-size: 20px;
+  -fx-font-weight: bold;
+}
+
+.grid {
+    -fx-background-color: #808080;
+}
+
+.grid-border {
+    -fx-background-radius: 13px;
+    -fx-border-radius: 10px;
+    -fx-border-width: 3px;
+    -fx-border-color: #bdbdbd;
+}
+
+.label {
+    -fx-font-family: 'Helvetica', 'Arial', sans-serif;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+
+.score-label {
+    -fx-font-family: 'Helvetica', 'Arial', sans-serif;
+    -fx-text-fill: white;
+    -fx-font-size: 20px;
+}
+
+.pause-button {
+    -fx-background-color: #666666;
+    -fx-background-radius: 13px;
+    -fx-border-radius: 10px;
+    -fx-border-width: 3px;
+    -fx-border-color: #bdbdbd;
+}
+
+.pause-bar {
+    -fx-background-color: white;
+    -fx-background-radius: 2px;
+}
+
+.pause-space-bar {
+    -fx-background-color: transparent;
+}
+
+/* TABLE:: */
+
+.table-view{
+   -fx-background-color: transparent;
+}
+
+.table-view .filler {
+    -fx-background-color: transparent;
+}
+
+.table-view:focused{
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background{
+    -fx-background-color: linear-gradient(#131313 0%, #424141 100%);
+}
+
+.table-view .column-header-background .label{
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .table-cell{
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+.table-row-cell{
+    -fx-background-color: -fx-table-cell-border-color, #616161;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:odd{
+    -fx-background-color: -fx-table-cell-border-color, #424242;
+    -fx-background-insets: 0, 0 0 1 0;
+    -fx-padding: 0.0em;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #00487d;
+    -fx-background-insets: 0;
+
+}
+
+.table-view > .virtual-flow > .scroll-bar:vertical,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track,
+.table-view > .virtual-flow > .scroll-bar:vertical > .track-background,
+.table-view > .virtual-flow > .scroll-bar:horizontal,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track,
+.table-view > .virtual-flow > .scroll-bar:horizontal > .track-background {
+    -fx-background-color: transparent;
+}
+
+
+
+.table-view > .virtual-flow > .scroll-bar > .increment-button,
+.table-view > .virtual-flow > .scroll-bar > .decrement-button {
+    -fx-opacity: 0;
+}
