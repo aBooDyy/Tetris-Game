@@ -1,7 +1,7 @@
 package tetris.gamecomponents.pieces;
 
 import tetris.gamecomponents.Piece;
-import tetris.utilities.Point;
+import tetris.gamecomponents.Point;
 import tetris.utilities.Properties;
 
 public class TestPiece extends Piece {

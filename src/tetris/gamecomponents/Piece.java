@@ -1,7 +1,6 @@
 package tetris.gamecomponents;
 
 import tetris.gamecomponents.pieces.*;
-import tetris.utilities.Point;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,57 +8,50 @@ import java.util.Random;
 
 public abstract class Piece {
 
-    private static final List<Class<? extends Piece>> piecesTypes = new ArrayList<>();
-
-    private final String color;
-    private final Point origin;
-    private final List<Point> points;
+    private final String COLOR;
+    private final Point ORIGIN;
+    private final List<Point> POINTS;
 
     public abstract int getID();
 
     public Piece(String color, Point origin, Point... points) {
-        this.color = color;
-        this.origin = origin;
-        this.points = new ArrayList<>();
-        this.points.add(origin);
-        this.points.addAll(List.of(points));
+        this.COLOR = color;
+        this.ORIGIN = origin;
+        this.POINTS = new ArrayList<>();
+        this.POINTS.add(origin);
+        this.POINTS.addAll(List.of(points));
 
-        for (Point point : this.points) {
+        for (Point point : this.POINTS) {
             point.setColor(color);
-        }
-
-        Class<? extends Piece> type = this.getClass();
-        if (!piecesTypes.contains(type)) {
-            piecesTypes.add(type);
         }
     }
 
     public String getColor() {
-        return color;
+        return COLOR;
     }
 
     public Point getOrigin() {
-        return origin;
+        return ORIGIN;
     }
 
     public List<Point> getPoints() {
-        return points;
+        return POINTS;
     }
 
     public void moveDown() {
-        for (Point point : points) {
+        for (Point point : POINTS) {
             point.addY(1);
         }
     }
 
     public void moveLeft() {
-        for (Point point : points) {
+        for (Point point : POINTS) {
             point.addX(-1);
         }
     }
 
     public void moveRight() {
-        for (Point point : points) {
+        for (Point point : POINTS) {
             point.addX(1);
         }
     }

@@ -14,6 +14,10 @@ public class Properties {
         return colorScheme;
     }
 
+    public static String[] getColorSchemeList() {
+        return new String[]{"Classic", "Coral", "Desert", "Forest", "Neon", "Ocean", "Pastel", "Sunset"};
+    }
+
     public static void setColorScheme(String colorScheme) {
         Properties.colorScheme = Scheme.getScheme(colorScheme);
     }

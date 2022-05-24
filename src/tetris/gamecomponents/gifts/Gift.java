@@ -1,7 +1,7 @@
 package tetris.gamecomponents.gifts;
 
 import tetris.gamecomponents.Board;
-import tetris.utilities.Point;
+import tetris.gamecomponents.Point;
 import tetris.utilities.Properties;
 
 import java.util.Random;
@@ -29,19 +29,23 @@ public abstract class Gift {
 
     public void showGift() {
         Random random = new Random();
-        int pieceStartingPosition = Properties.getWidth() / 2 - 2;
+        // a variable of the starting position of the falling piece (the middle of the grid) to
+        // avoid generating the gift point in that place.
         int randomX;
         int randomY;
-
+        // generate random x and y values in the range of our board and set them to be the gift's point's values
         do {
             randomX = random.nextInt(Properties.getWidth());
-            randomY = random.nextInt(Properties.getHeight());
+            randomY = random.nextInt(Properties.getHeight() - 2) + 2;
             point.setX(randomX);
             point.setY(randomY);
-        } while (board.containsPoint(point) ||
-                (randomY == 0 || randomY == 1 && randomX < pieceStartingPosition + 3 && randomX > pieceStartingPosition));
 
-        board.getGiftPoints().add(point);
+            // we keep getting random numbers (new point position) until we find an empty place in the board that does not
+            // have a point.
+        } while (board.containsPoint(point));
+
+        // after getting the point, we set it in the appropriate variable in the board object using the setter method
+        board.setGiftPoint(point);
     }
 
     public abstract void giveReward();

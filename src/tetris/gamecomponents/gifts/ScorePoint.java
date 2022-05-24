@@ -7,13 +7,20 @@ import java.util.Random;
 
 public class ScorePoint extends Gift {
 
+    private final int randomScore;
+
     public ScorePoint(Board board) {
         super(board, Properties.getColorScheme().getYellow());
+        Random random = new Random();
+        randomScore = random.nextInt(10) + 1;
     }
 
     @Override
     public void giveReward() {
-        Random random = new Random();
-        board.increaseScore(random.nextInt(10) + 1);
+        board.increaseScore(randomScore);
+    }
+
+    public int getRandomScore() {
+        return randomScore;
     }
 }

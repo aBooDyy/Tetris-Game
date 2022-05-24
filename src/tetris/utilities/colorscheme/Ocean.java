@@ -2,44 +2,44 @@ package tetris.utilities.colorscheme;
 
 public class Ocean extends Scheme {
 
-    private static Ocean instance = new Ocean();
+    private static final Ocean instance = new Ocean();
 
     private Ocean() {
     }
 
     @Override
     public String getLightBlue() {
-        return "#78d5ff";
+        return "#8ad4f6";
     }
 
     @Override
     public String getDarkBlue() {
-        return "#1010b0";
+        return "#06568d";
     }
 
     @Override
     public String getOrange() {
-        return "#eda013";
+        return "#95eec5";
     }
 
     @Override
     public String getYellow() {
-        return "#ffeb29";
+        return "#eedb95";
     }
 
     @Override
     public String getGreen() {
-        return "#1af01a";
+        return "#2596be";
     }
 
     @Override
     public String getRed() {
-        return "#ed1a1a";
+        return "#fbecec";
     }
 
     @Override
     public String getMagenta() {
-        return "de0bde";
+        return "#12d4a4";
     }
 
     public static Ocean getInstance() {

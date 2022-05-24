@@ -31,6 +31,9 @@ public class Data {
         return players.get(name);
     }
 
+    /**
+     * Saves collected information from all players into a file in the player’s machine.
+     */
     public void save() {
         if (FILE == null) {
             System.out.println("Failed to save data file.");

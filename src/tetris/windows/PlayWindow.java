@@ -20,11 +20,12 @@ import tetris.Tetris;
 import tetris.datahandler.Data;
 import tetris.datahandler.PlayerData;
 import tetris.gamecomponents.Board;
+import tetris.gamecomponents.gifts.ScorePoint;
 import tetris.gamecomponents.pieces.IPiece;
 import tetris.gamecomponents.pieces.OPiece;
 import tetris.gamecomponents.Piece;
 import tetris.utilities.Direction;
-import tetris.utilities.Point;
+import tetris.gamecomponents.Point;
 import tetris.utilities.Properties;
 import tetris.utilities.Utils;
 
@@ -34,15 +35,15 @@ import java.util.List;
 
 public class PlayWindow extends StackPane {
 
-    private final Scene scene;
+    private final Scene SCENE;
 
-    private final HBox windowContent;
-    private final GridPane gameGrid;
-    private final GridPane nextPiecesGrid;
-    private final GridPane heldPieceGrid;
+    private final HBox WINDOW_CONTENT;
+    private final GridPane GAME_GRID;
+    private final GridPane NEXT_PIECES_GRID;
+    private final GridPane HELD_PIECES_GIRD;
 
-    private final VBox pauseMenu;
-    private final VBox gameOverMenu;
+    private final VBox PAUSE_MENU;
+    private final VBox GAME_OVER_MENU;
 
     private Board gameBoard;
     private SequentialTransition fallTransition;
@@ -51,34 +52,25 @@ public class PlayWindow extends StackPane {
     private Label score;
     private Label lines;
     private final PlayerData playerData;
-    private PlayerData player2Data;
 
 
     public PlayWindow(String playerName, int level) {
-        this(playerName, null, level);
-    }
+        SCENE = new Scene(this);
+        SCENE.getStylesheets().add("style.css");
 
-    public PlayWindow(String playerName, String player2Name, int level) {
-        scene = new Scene(this);
-        scene.getStylesheets().add("style.css");
+        WINDOW_CONTENT = new HBox();
+        gameBoard = new Board(1);
+        GAME_GRID = new GridPane();
+        NEXT_PIECES_GRID = new GridPane();
+        HELD_PIECES_GIRD = new GridPane();
 
-        windowContent = new HBox();
-        gameBoard = new Board(1, player2Name != null);
-        gameGrid = new GridPane();
-        nextPiecesGrid = new GridPane();
-        heldPieceGrid = new GridPane();
-
-        pauseMenu = new VBox();
-        gameOverMenu = new VBox();
+        PAUSE_MENU = new VBox();
+        GAME_OVER_MENU = new VBox();
 
         this.level = level;
         score = new Label("0");
         lines = new Label("0");
         playerData = Data.getInstance().getPlayerData(playerName);
-
-        if (player2Name != null) {
-            player2Data = Data.getInstance().getPlayerData(player2Name);
-        }
 
         createWindow();
         setKeyPressActions();
@@ -90,6 +82,11 @@ public class PlayWindow extends StackPane {
         playerData.increaseGamesPlayed(1);
     }
 
+    /**
+     * Handles the update of the user interface visuals by accessing the board object and its
+     * points lists (pointsToClear, pointsToColor, shadowPoints, and giftPoints) along with updating the
+     * information in the score board.
+     */
     private void updateGameGrid() {
         if (gameBoard.isGameOver()) {
             showGameOverMenu();
@@ -102,7 +99,7 @@ public class PlayWindow extends StackPane {
             Rectangle square = new Rectangle(Properties.PIXEL, Properties.PIXEL);
             square.setFill(Color.web(Properties.getColorScheme().getGray()));
 
-            gameGrid.add(square, point.getX(), point.getY());
+            GAME_GRID.add(square, point.getX(), point.getY());
         }
         gameBoard.getPointsToClear().clear();
 
@@ -110,13 +107,13 @@ public class PlayWindow extends StackPane {
             Rectangle square = new Rectangle(squarePixel, squarePixel);
             square.setFill(Color.web(Properties.getColorScheme().getGray()));
 
-            Group cell = Utils.getShadedCell(squarePixel);
+            Group cell = Utils.getShadedCell(squarePixel, false);
             cell.getChildren().add(0, square);
 
             BorderPane borderPane = new BorderPane();
             borderPane.setCenter(cell);
 
-            gameGrid.add(borderPane, point.getX(), point.getY());
+            GAME_GRID.add(borderPane, point.getX(), point.getY());
         }
 
         List<Point> pointsToColor = new ArrayList<>(gameBoard.getPointsToColor());
@@ -126,26 +123,31 @@ public class PlayWindow extends StackPane {
             Rectangle square = new Rectangle(squarePixel, squarePixel);
             square.setFill(Color.web(point.getColor()));
 
-            Group cell = Utils.getShadedCell(squarePixel);
+            Group cell = Utils.getShadedCell(squarePixel, true);
             cell.getChildren().add(0, square);
 
             BorderPane borderPane = new BorderPane();
             borderPane.setCenter(cell);
 
-            gameGrid.add(borderPane, point.getX(), point.getY());
+            GAME_GRID.add(borderPane, point.getX(), point.getY());
         }
         gameBoard.getPointsToColor().clear();
 
-        //TODO Put this nicely
-        for (Point point : gameBoard.getGiftPoints()) {
-            Circle circle = new Circle(squarePixel/2);
-            circle.setFill(Color.web(point.getColor()));
-
+        Point point = gameBoard.getGiftPoint();
+        if (point != null) {
             BorderPane borderPane = new BorderPane();
-            borderPane.setCenter(circle);
 
-            gameGrid.add(borderPane, point.getX(), point.getY());
+            if (gameBoard.getGift() instanceof ScorePoint) {
+                borderPane.setCenter(Utils.getCoinShape(squarePixel, ((ScorePoint) gameBoard.getGift()).getRandomScore()));
+            } else {
+                Circle circle = new Circle(squarePixel/2);
+                circle.setFill(Color.web(point.getColor()));
+                borderPane.setCenter(circle);
+            }
+
+            GAME_GRID.add(borderPane, point.getX(), point.getY());
         }
+
 
         savePlayerData(Integer.parseInt(score.getText()), Integer.parseInt(lines.getText()));
         score.setText(String.valueOf(gameBoard.getScore()));
@@ -157,6 +159,11 @@ public class PlayWindow extends StackPane {
         }
     }
 
+
+    /**
+     * Handles the update of the user interface visuals by accessing the next pieces grid
+     * object and its nextFallingPieces points lists.
+     */
     private void updateNextPiecesGrid() {
         LinkedList<Piece> nextPieces = gameBoard.getNextFallingPieces();
         double squarePixel = Properties.PIXEL / 2d;
@@ -165,7 +172,7 @@ public class PlayWindow extends StackPane {
             for (int column = 0; column < 6; column++) {
                 Rectangle square = new Rectangle(squarePixel, squarePixel);
                 square.setFill(Color.web(Properties.getColorScheme().getGray()));
-                nextPiecesGrid.add(square, column, row);
+                NEXT_PIECES_GRID.add(square, column, row);
             }
         }
 
@@ -179,15 +186,20 @@ public class PlayWindow extends StackPane {
                 Rectangle square = new Rectangle(squarePixel, squarePixel);
                 square.setFill(Color.web(piece.getColor()));
 
-                Group cell = Utils.getShadedCell(squarePixel);
+                Group cell = Utils.getShadedCell(squarePixel, false);
                 cell.getChildren().add(0, square);
 
-                nextPiecesGrid.add(cell, point.getX()+addedX, point.getY() + addedY);
+                NEXT_PIECES_GRID.add(cell, point.getX()+addedX, point.getY() + addedY);
             }
 
         }
     }
 
+
+    /**
+     * Handles the update of the user interface visuals by accessing the held pieces grid
+     * object and its heldPiece points list.
+     */
     private void updateHeldPieceGrid() {
         Piece piece = gameBoard.getHeldPiece();
         double squarePixel = Properties.PIXEL / 2d;
@@ -199,7 +211,7 @@ public class PlayWindow extends StackPane {
             for (int column = 1; column < 5; column++) {
                 Rectangle square = new Rectangle(squarePixel, squarePixel);
                 square.setFill(Color.web(Properties.getColorScheme().getGray()));
-                heldPieceGrid.add(square, column, row);
+                HELD_PIECES_GIRD.add(square, column, row);
             }
         }
 
@@ -211,23 +223,29 @@ public class PlayWindow extends StackPane {
             Rectangle square = new Rectangle(squarePixel, squarePixel);
             square.setFill(Color.web(piece.getColor()));
 
-            Group cell = Utils.getShadedCell(squarePixel);
+            Group cell = Utils.getShadedCell(squarePixel, false);
             cell.getChildren().add(0, square);
 
-            heldPieceGrid.add(cell, point.getX() + addedX, point.getY() + addedY);
+            HELD_PIECES_GIRD.add(cell, point.getX() + addedX, point.getY() + addedY);
         }
 
     }
 
-    private void setKeyPressActions() {
-        scene.setOnKeyPressed(keyEvent -> {
 
-            if (this.getChildren().contains(pauseMenu) && keyEvent.getCode() == KeyCode.ESCAPE) {
+    /**
+     * Assigns the keyboard inputs DOWN to DOWN_BY_PLAYER, LEFT arrow key to LEFT,
+     * RIGHT arrow key to RIGHT, UP arrow key to ROTATE_CLOCKWISE, Z to ROTATE_COUNTERCLOCKWISE, C
+     * to holding the piece, SPACE to hard drop the piece, and ESCAPE to pause or resume the game.
+     */
+    private void setKeyPressActions() {
+        SCENE.setOnKeyPressed(keyEvent -> {
+
+            if (this.getChildren().contains(PAUSE_MENU) && keyEvent.getCode() == KeyCode.ESCAPE) {
                 resumeGame();
                 return;
             }
 
-            if ((this.getChildren().contains(pauseMenu) || this.getChildren().contains(gameOverMenu))) {
+            if ((this.getChildren().contains(PAUSE_MENU) || this.getChildren().contains(GAME_OVER_MENU))) {
                 return;
             }
 
@@ -256,11 +274,7 @@ public class PlayWindow extends StackPane {
                     gameBoard.hardDrop();
                     break;
                 case ESCAPE:
-                    if (this.getChildren().contains(pauseMenu)) {
-                        resumeGame();
-                    } else {
-                        pauseGame();
-                    }
+                    pauseGame();
                     return;
                 default:
                     return;
@@ -270,9 +284,13 @@ public class PlayWindow extends StackPane {
         });
     }
 
+    /**
+     * Executes when an object is instantiated from the class and handles the functionality for
+     * the automatic movement for the object and calculating the play time.
+     */
     private void fallTransition() {
-        // 800ms = 0.8s
-        double speed = 900d - level * 50;
+        // speed in milliseconds
+        double speed = 900d - level * 150;
 
         fallTransition = new SequentialTransition();
         PauseTransition pauseTransition = new PauseTransition(Duration.millis(speed));
@@ -288,13 +306,17 @@ public class PlayWindow extends StackPane {
         fallTransition.play();
     }
 
+    /**
+     * Handles the creation of the window which contains javafx elements and will eventually
+     * represent the user interface of the game.
+     */
     private void createWindow() {
 
-        setupGrid(gameGrid, Properties.getWidth(), Properties.getHeight(), Properties.PIXEL, false);
-        setupGrid(nextPiecesGrid, 6, 10, Properties.PIXEL/2d, true);
-        setupGrid(heldPieceGrid, 6, 4, Properties.PIXEL/2d, true);
+        setupGrid(GAME_GRID, Properties.getWidth(), Properties.getHeight(), Properties.PIXEL, false);
+        setupGrid(NEXT_PIECES_GRID, 6, 10, Properties.PIXEL/2d, true);
+        setupGrid(HELD_PIECES_GIRD, 6, 4, Properties.PIXEL/2d, true);
 
-        gameGrid.getStyleClass().add("game-grid");
+        GAME_GRID.getStyleClass().add("game-grid");
 
         BorderPane rightSidePane = new BorderPane();
         rightSidePane.setPadding(new Insets(10));
@@ -311,14 +333,14 @@ public class PlayWindow extends StackPane {
         nextPiecesBoxPane.setPadding(new Insets(25, 10, 25, 25));
 
         nextPiecesBoxPane.setTop(nextPiecesBoxLabel);
-        nextPiecesBoxPane.setCenter(nextPiecesGrid);
+        nextPiecesBoxPane.setCenter(NEXT_PIECES_GRID);
         nextPiecesBoxPane.setRight(leftArrow);
         BorderPane.setAlignment(leftArrow, Pos.BOTTOM_RIGHT);
 
         HBox pauseButton = new HBox();
         pauseButton.setMinSize(50, 50);
         pauseButton.setMaxSize(50, 50);
-        pauseButton.getStyleClass().add("pause-button");
+        pauseButton.getStyleClass().add("tab-style");
 
         HBox pauseBars = new HBox();
         pauseBars.setPadding(new Insets(10));
@@ -343,9 +365,7 @@ public class PlayWindow extends StackPane {
         pauseButton.setAlignment(Pos.CENTER);
         pauseButton.getChildren().add(pauseBars);
 
-        pauseButton.setOnMouseClicked(mouseEvent -> {
-            pauseGame();
-        });
+        pauseButton.setOnMouseClicked(mouseEvent -> pauseGame());
 
         rightSidePane.setTop(nextPiecesBoxPane);
         rightSidePane.setBottom(pauseButton);
@@ -358,7 +378,7 @@ public class PlayWindow extends StackPane {
         heldBoxLabel.setPadding(new Insets(0, 0, 10, 0));
 
         heldPieceBoxPane.setTop(heldBoxLabel);
-        heldPieceBoxPane.setCenter(heldPieceGrid);
+        heldPieceBoxPane.setCenter(HELD_PIECES_GIRD);
         BorderPane.setAlignment(heldBoxLabel, Pos.CENTER);
         heldPieceBoxPane.setPadding(new Insets(25));
 
@@ -396,31 +416,39 @@ public class PlayWindow extends StackPane {
 
         VBox gameGridBox = new VBox();
         gameGridBox.setAlignment(Pos.CENTER);
-        gameGridBox.getChildren().add(gameGrid);
+        gameGridBox.getChildren().add(GAME_GRID);
 
-        windowContent.setAlignment(Pos.CENTER);
-        windowContent.setPadding(new Insets(2));
+        WINDOW_CONTENT.setAlignment(Pos.CENTER);
+        WINDOW_CONTENT.setPadding(new Insets(2));
         //space between the Game Grid and the text
-        windowContent.setSpacing(25d);
-        windowContent.getChildren().addAll(leftSidePane, gameGridBox, rightSidePane);
-        windowContent.getStyleClass().add("background-color");
+        WINDOW_CONTENT.setSpacing(25d);
+        WINDOW_CONTENT.getChildren().addAll(leftSidePane, gameGridBox, rightSidePane);
+        WINDOW_CONTENT.getStyleClass().add("background-color");
 
-        this.getChildren().add(windowContent);
+        this.getChildren().add(WINDOW_CONTENT);
     }
 
+    /**
+     * Handles the termination of the play window, used when the the user would like to
+     * exit the game matrix and return to the main menu.
+     */
     private void terminateWindow() {
         fallTransition = null;
         Tetris.switchScene(MainWindow.getInstance().getMainWindowScene());
     }
 
+    /**
+     * This method creates a new game board matrix when the user pauses and resumes the
+     * game, and when the user fails the game and begins a new game.
+     */
     private void startNewGame() {
-        gameBoard = new Board(1, player2Data != null);
+        gameBoard = new Board(level);
         for (int row = 0; row < Properties.getHeight(); row++) {
             for (int column = 0; column < Properties.getWidth(); column++) {
                 Rectangle square = new Rectangle(Properties.PIXEL, Properties.PIXEL);
                 square.setFill(Color.web(Properties.getColorScheme().getGray()));
 
-                gameGrid.add(square, column, row);
+                GAME_GRID.add(square, column, row);
             }
         }
 
@@ -431,32 +459,46 @@ public class PlayWindow extends StackPane {
         updateHeldPieceGrid();
     }
 
+    /**
+     * This method pauses the game play and displays the pause menu with options to resume,
+     * restart, or close.
+     */
     private void pauseGame() {
         fallTransition.pause();
-        windowContent.setEffect(new GaussianBlur());
+        WINDOW_CONTENT.setEffect(new GaussianBlur());
 
-        this.getChildren().add(pauseMenu);
+        this.getChildren().add(PAUSE_MENU);
     }
 
+    /**
+     * This method hides the pause menu and resumes the game play.
+     */
     private void resumeGame() {
         fallTransition.play();
-        windowContent.setEffect(null);
+        WINDOW_CONTENT.setEffect(null);
 
-        this.getChildren().remove(pauseMenu);
+        this.getChildren().remove(PAUSE_MENU);
     }
 
+    /**
+     * Configures the pause menu options with javafx elements, including resume, restart,
+     * and close.
+     */
     private void createPauseMenu() {
-        pauseMenu.setSpacing(25d);
-        pauseMenu.setMinSize(200, 400);
-        pauseMenu.setMaxSize(200, 400);
-        // TODO: Style this
-        pauseMenu.getStyleClass().add("pause-button");
-        pauseMenu.setAlignment(Pos.CENTER);
+        PAUSE_MENU.setSpacing(25d);
+        PAUSE_MENU.setMinSize(200, 400);
+        PAUSE_MENU.setMaxSize(200, 400);
+        PAUSE_MENU.getStyleClass().add("tab-style");
+        PAUSE_MENU.setAlignment(Pos.CENTER);
 
         Label paused = new Label("PAUSED");
+        paused.setStyle("-fx-font-weight: bold;");
         Button resume = new Button("Resume");
+        resume.getStyleClass().add("buttons");
         Button restart = new Button("Restart");
+        restart.getStyleClass().add("buttons");
         Button quit = new Button("Quit");
+        quit.getStyleClass().add("buttons");
 
         resume.setOnAction(actionEvent -> resumeGame());
         restart.setOnAction(actionEvent -> {
@@ -465,30 +507,39 @@ public class PlayWindow extends StackPane {
         });
         quit.setOnAction(actionEvent -> terminateWindow());
 
-        pauseMenu.getChildren().addAll(paused, resume, restart, quit);
+        PAUSE_MENU.getChildren().addAll(paused, resume, restart, quit);
     }
 
+    /**
+     * When the game is officially over (the center four points of the top row are filled),
+     * this menu is displayed.
+     */
     private void showGameOverMenu() {
         fallTransition.stop();
-        windowContent.setEffect(new GaussianBlur());
+        WINDOW_CONTENT.setEffect(new GaussianBlur());
 
-        this.getChildren().add(gameOverMenu);
+        this.getChildren().add(GAME_OVER_MENU);
     }
 
+    /**
+     * Hides the game over menu from view.
+     */
     private void hideGameOverMenu() {
         fallTransition.play();
-        windowContent.setEffect(null);
+        WINDOW_CONTENT.setEffect(null);
 
-        this.getChildren().remove(gameOverMenu);
+        this.getChildren().remove(GAME_OVER_MENU);
     }
 
+    /**
+     *  configures the game over menu using JavaFX elements.
+     */
     private void createGameOverMenu() {
-        gameOverMenu.setSpacing(25d);
-        gameOverMenu.setMinSize(200, 400);
-        gameOverMenu.setMaxSize(200, 400);
-        // TODO: Style this
-        gameOverMenu.getStyleClass().add("pause-button");
-        gameOverMenu.setAlignment(Pos.CENTER);
+        GAME_OVER_MENU.setSpacing(25d);
+        GAME_OVER_MENU.setMinSize(200, 400);
+        GAME_OVER_MENU.setMaxSize(200, 400);
+        GAME_OVER_MENU.getStyleClass().add("tab-style");
+        GAME_OVER_MENU.setAlignment(Pos.CENTER);
 
         Label gameOver = new Label("GAME OVER");
         Button tryAgain = new Button("Try again");
@@ -500,15 +551,31 @@ public class PlayWindow extends StackPane {
         });
         quit.setOnAction(actionEvent -> terminateWindow());
 
-        gameOverMenu.getChildren().addAll(gameOver, tryAgain, quit);
+        GAME_OVER_MENU.getChildren().addAll(gameOver, tryAgain, quit);
     }
 
+    /**
+     * Saves player data every time the piece is moved in the game which results in changing
+     * the statistics of the player.
+     *
+     * @param oldScore the old score of the board to calculate the amount to increase the score
+     * @param oldLines the old cleared lines of the board to calculate the amount to increase the cleared lines
+     */
     private void savePlayerData(int oldScore, int oldLines) {
         playerData.increaseLines(gameBoard.getClearedLines() - oldLines);
         playerData.increaseTotalScore(gameBoard.getScore() - oldScore);
         playerData.setHighestScore(gameBoard.getScore());
     }
 
+    /**
+     * Sets up the JavaFX grid elements for a given grid pane
+     *
+     * @param grid the grid to set up
+     * @param width the desired width of the grid
+     * @param height the desired height of the grid
+     * @param size the desired size of the square box
+     * @param setStyle whether to apply css style to the grid
+     */
     private static void setupGrid(GridPane grid, int width, int height, double size, boolean setStyle) {
         grid.setVgap(2);
         grid.setHgap(2);
@@ -521,7 +588,6 @@ public class PlayWindow extends StackPane {
         for (int row = 0; row < height; row++) {
             for (int column = 0; column < width; column++) {
                 Rectangle square = new Rectangle(size, size);
-                // TODO: use my own color object/value
                 square.setFill(Color.web(Properties.getColorScheme().getGray()));
                 grid.add(square, column, row);
             }
@@ -529,6 +595,6 @@ public class PlayWindow extends StackPane {
     }
 
     public Scene getPlayWindowScene() {
-        return scene;
+        return SCENE;
     }
 }

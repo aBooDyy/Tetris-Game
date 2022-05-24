@@ -7,7 +7,7 @@ public class PlayerData {
 
     @Expose
     @SerializedName("player_name")
-    private String playerName;
+    private final String playerName;
 
     @Expose
     @SerializedName("total_lines")

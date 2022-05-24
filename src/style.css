@@ -18,6 +18,24 @@
   -fx-font-weight: bold;
 }
 
+.buttons {
+  -fx-font-family: 'Helvetica', 'Arial', sans-serif;
+  -fx-font-size: 15px;
+  -fx-focus-color: #969696;
+}
+
+.close-button {
+  -fx-font-family: 'Helvetica', 'Arial', sans-serif;
+  -fx-text-fill: white;
+  -fx-font-size: 10px;
+  -fx-font-weight: bold;
+  -fx-background-color: #666666;
+  -fx-background-radius: 13px;
+  -fx-border-radius: 8px;
+  -fx-border-width: 2px;
+  -fx-border-color: #e0e0e0;
+}
+
 .grid {
     -fx-background-color: #808080;
 }
@@ -35,18 +53,33 @@
     -fx-font-size: 20px;
 }
 
+.hyperlink {
+    -fx-text-fill: #e6e6e6;
+    -fx-font-size: 12px;
+}
+
+.hyperlink:focused {
+    -fx-text-fill: white;
+    -fx-border-style: none;
+    -fx-border-width: 0;
+}
+
 .score-label {
     -fx-font-family: 'Helvetica', 'Arial', sans-serif;
     -fx-text-fill: white;
     -fx-font-size: 20px;
 }
 
-.pause-button {
+.tab-style {
     -fx-background-color: #666666;
     -fx-background-radius: 13px;
     -fx-border-radius: 10px;
     -fx-border-width: 3px;
     -fx-border-color: #bdbdbd;
+}
+
+.scroll-pane > .viewport {
+   -fx-background-color: #666666;
 }
 
 .pause-bar {

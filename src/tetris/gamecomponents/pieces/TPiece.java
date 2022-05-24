@@ -2,7 +2,7 @@ package tetris.gamecomponents.pieces;
 
 import tetris.gamecomponents.Piece;
 import tetris.gamecomponents.Rotatable;
-import tetris.utilities.Point;
+import tetris.gamecomponents.Point;
 import tetris.utilities.Properties;
 
 public class TPiece extends Piece implements Rotatable {
