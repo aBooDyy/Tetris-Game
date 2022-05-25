@@ -12,6 +12,11 @@ public abstract class Piece {
     private final Point ORIGIN;
     private final List<Point> POINTS;
 
+    /**
+     * Returns the number between 0 and 6 describing which type of piece it is, either I, J, L, O, S, Z, or T.
+     *
+     * @return the piece ID.
+     */
     public abstract int getID();
 
     public Piece(String color, Point origin, Point... points) {
@@ -30,32 +35,57 @@ public abstract class Piece {
         return COLOR;
     }
 
+    /**
+     * Returns the point from the piece which is assigned as the origin of the piece around which it
+     * rotates.
+     *
+     * @return the piece's origin point
+     */
     public Point getOrigin() {
         return ORIGIN;
     }
 
+    /**
+     * Returns a list of points from which the piece is made.
+     *
+     * @return the list of points
+     */
     public List<Point> getPoints() {
         return POINTS;
     }
 
+    /**
+     * Increases all the points’ y coordinates by 1 to move it down.
+     */
     public void moveDown() {
         for (Point point : POINTS) {
             point.addY(1);
         }
     }
 
+    /**
+     * Decreases all the points’ x coordinates by 1 to move it down.
+     */
     public void moveLeft() {
         for (Point point : POINTS) {
             point.addX(-1);
         }
     }
 
+    /**
+     * Increases all the points’ x coordinates by 1 to move it down.
+     */
     public void moveRight() {
         for (Point point : POINTS) {
             point.addX(1);
         }
     }
 
+    /**
+     * Generates a new random piece, either I, J, L, O, S, Z, or T.
+     *
+     * @return the generated piece.
+     */
     public static Piece getPiece() {
         Random random = new Random();
         int randomID = random.nextInt(7);
@@ -63,6 +93,12 @@ public abstract class Piece {
         return getPiece(randomID);
     }
 
+    /**
+     * Generates a new piece according to the parameter.
+     *
+     * @param id the piece's ID to get.
+     * @return the piece with the given ID
+     */
     public static Piece getPiece(int id) {
 //        id = 999;
         switch (id) {

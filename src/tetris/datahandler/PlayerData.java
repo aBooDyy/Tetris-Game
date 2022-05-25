@@ -33,22 +33,48 @@ public class PlayerData {
         this.playerName = playerName;
     }
 
+    /**
+     * Adds the given parameter to the number of lines cleared by the player
+     *
+     * @param increaseValue the increase value
+     */
     public void increaseLines(int increaseValue) {
         this.lines += increaseValue;
     }
 
+    /**
+     * Adds the given parameter to the total score of the player
+     *
+     * @param increaseValue the increase value
+     */
     public void increaseTotalScore(int increaseValue) {
         this.totalScore += increaseValue;
     }
 
+    /**
+     * Compares the player’s past highest score and the given parameter value and sets the
+     * larger value to the new highest score.
+     *
+     * @param highestScore a score value
+     */
     public void setHighestScore(int highestScore) {
         this.highestScore = Math.max(this.highestScore, highestScore);
     }
 
+    /**
+     * Adds the given parameter value to the number of games the player has played.
+     *
+     * @param increaseValue the increase value
+     */
     public void increaseGamesPlayed(int increaseValue) {
         this.gamesPlayed += increaseValue;
     }
 
+    /**
+     * Adds the given parameter value to the total time the player has played.
+     *
+     * @param increaseValue the increase value
+     */
     public void increasePlayTime(long increaseValue) {
         this.playTime += increaseValue;
     }

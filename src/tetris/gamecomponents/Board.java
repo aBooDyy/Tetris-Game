@@ -73,6 +73,12 @@ public class Board {
         generateNextFallingPiece();
     }
 
+    /**
+     * Adds old shadow points to pointsToClear, duplicates current fallingPiece points
+     * and moves them down until they hit the ground or another piece to create the new shadow points.
+     *
+     * @param clearOld determines whether to add old shadow points to the points to clear list or not
+     */
     private void updateShadowPoints(boolean clearOld) {
         // check if it is required to clear the old shadowPoints or not, based on the situation from the passed boolean value
         if (clearOld) {
@@ -131,7 +137,13 @@ public class Board {
 //        }
     }
 
-    // this method returns true if the piece has been moved, and false if it wasn't moved.
+    /**
+     * First checks if the movement in the direction provided in the parameter is possible. If
+     * it is, the falling Piece is moved in this direction.
+     *
+     * @param direction the direction of the movement
+     * @return true if the piece has been moved successfully in the specified direction, false otherwise.
+     */
     public boolean moveFallingPiece(Direction direction) {
         // Here we first check if the piece cannot move to cover specific cases or stop the movement completely
         if (!canMove(direction)) {
@@ -239,6 +251,10 @@ public class Board {
         return true;
     }
 
+    /**
+     * Clears falling piece points and recreates them using the shadow points, effectively dropping
+     * the falling piece directly into place
+     */
     public void hardDrop() {
         // if the there is no shadow, then we cannot hard drop.
         if (shadowPoints.isEmpty()) {
@@ -285,6 +301,12 @@ public class Board {
         }
     }
 
+    /**
+     * First checks if holding is possible, then assigns the falling piece to the heldPiece
+     * instance variable if it is empty and generates a new falling piece in the game matrix. If it is not empty,
+     * the heldPiece and the fallingPiece are switched. Once the method is used, it does not allow holding to
+     * occur immediately again.
+     */
     public void holdFallingPiece() {
         // check if the held piece slot is null (empty)
         if (heldPiece == null) {
@@ -319,6 +341,11 @@ public class Board {
         positionFallingPiece();
     }
 
+    /**
+     * If there is a peice in the nextFallingPieces variable list, it sets the first
+     * instance of nextFallingPiece variable list to the fallingPiece. Otherwise, it generates a new random piece
+     * and fills the nextFallingPiece variable list.
+     */
     private void generateNextFallingPiece() {
         // A loop to run 3 times to check the 3 points at the top if they are filled to indicate of the game is over.
         for (int i = Properties.getWidth()/2 - 2; i < Properties.getWidth()/2 + 1; i++) {
@@ -352,6 +379,10 @@ public class Board {
         fillNextFallingPieces();
     }
 
+    /**
+     * Generates random pieces to fill the nextFallingPieces variable list to up to 3
+     * instances.
+     */
     private void fillNextFallingPieces() {
         // a loop to run 3 or 2 or 1 time(s) to fill the nextFallingPieces list to have a maximum of 3 elements
         for (int i = nextFallingPieces.size(); i < 3; i++) {
@@ -362,6 +393,10 @@ public class Board {
         }
     }
 
+    /**
+     * Centers a newly added fallingPiece in the game matrix because pieces are
+     * automatically added at (0,0).
+     */
     private void positionFallingPiece() {
         // assigns the amount of points the piece should be moved from the origin (0,0) at the top left
         // to be in the middle of the board (right movement, which means increasing the x value)
@@ -381,6 +416,13 @@ public class Board {
         updateShadowPoints(false);
     }
 
+    /**
+     * Checks whether there point where a fallingPiece is going to move is already filled. If it is filled,
+     * the fallingPiece can’t move to this position. If it is empty, it can be moved.
+     *
+     * @param direction the direction of the movement to check.
+     * @return true if the movement is possible, false otherwise.
+     */
     private boolean canMove(Direction direction) {
         // we loop over the falling piece points and perform the requested movement on every point to check if it is possible
         // as in there is no piece at that point.
@@ -428,7 +470,14 @@ public class Board {
         return true;
     }
 
-    // this method check if there are full lines in the region given, from the lowest point to the highest point.
+    /**
+     * Checks the filledPoints map for full rows of filled Points. If full rows are found, the
+     * points are added the pointsToClear list and the amount of cleared lines is increased by one. All the
+     * points above the cleared row are moved down by one row.
+     *
+     * @param highestPoint the highest point (lowest y value) to check for full lines.
+     * @param lowestPoint the lowest point (highest y value) to check for full lines.
+     */
     private void checkForFullLines(int highestPoint, int lowestPoint) {
         // a variable to count how many lines has been cleared.
         int countOfLines = 0;
@@ -495,6 +544,9 @@ public class Board {
         score += countOfLines == 0 ? 0 : (200*countOfLines - 100) * level;
     }
 
+    /**
+     * Converts the current falling piece points to filled points in the game matrix.
+     */
     private void placeFallingPiece() {
         // loop over the falling piece points to place the piece
         for (Point point : fallingPiece.getPoints()) {
@@ -507,6 +559,9 @@ public class Board {
         isHoldingPossible = true;
     }
 
+    /**
+     * Displays the gift point in the game matrix to be collected.
+     */
     private void showGift() {
         // if there is currently a gift, then we don't do anything until the current one is collected
         if (gift != null) {
@@ -518,6 +573,9 @@ public class Board {
         gift.showGift();
     }
 
+    /**
+     * Check if the player collected the gift and gives them the reward.
+     */
     private void checkGifts() {
         // if there is no gift, or the player didn't go over the gift, then we don't do anything
         if (gift == null || !fallingPiece.getPoints().contains(gift.getPoint())) {
@@ -533,6 +591,11 @@ public class Board {
         updateShadowPoints(true);
     }
 
+    /**
+     * Fills the given point in the game matrix.
+     *
+     * @param point the point to be filled.
+     */
     public void  fillPoint(Point point) {
         // the current list of points at the given point's y value in the map, or if there is none, then we
         // create a new empty list
@@ -546,6 +609,13 @@ public class Board {
         filledPoints.put(point.getY(), rowPoints);
     }
 
+    /**
+     * Check to see whether the points where the falling piece is trying to move, given in the
+     * parameter, are already filled.
+     *
+     * @param point the point to check
+     * @return true if the game matrix contains the given point, false otherwise.
+     */
     public boolean containsPoint(Point point) {
         // the list of points at the given point's y value in the map to check
         List<Point> rowPoints = filledPoints.get(point.getY());
@@ -571,8 +641,7 @@ public class Board {
         return giftPoint;
     }
 
-    public void
-    setGiftPoint(Point giftPoint) {
+    public void setGiftPoint(Point giftPoint) {
         this.giftPoint = giftPoint;
     }
 
@@ -592,10 +661,21 @@ public class Board {
         return gift;
     }
 
+    /**
+     * Boolean variable indicating whether the game is officially over by checking if any of the
+     * center four points at the top of the game matrix are filled.
+     *
+     * @return the value of isGameOver variable
+     */
     public boolean isGameOver() {
         return isGameOver;
     }
 
+    /**
+     * Boolean which holds whether the nextPieceGrid should be updated or not
+     *
+     * @return the value of updateNextPiecesGrid variable
+     */
     public boolean isUpdateNextPiecesGrid() {
         return updateNextPiecesGrid;
     }
@@ -604,6 +684,11 @@ public class Board {
         return score;
     }
 
+    /**
+     * Adds the given parameter value to the player’s score.
+     *
+     * @param value the value to increase
+     */
     public void increaseScore(int value) {
         score += value;
     }
@@ -612,6 +697,12 @@ public class Board {
         return clearedLines;
     }
 
+    /**
+     * Assigns the given boolean parameter to the updateNextPiecesGrid variable
+     * to either update or not.
+     *
+     * @param updateNextPiecesGrid the value to be assigned.
+     */
     public void setUpdateNextPiecesGrid(boolean updateNextPiecesGrid) {
         this.updateNextPiecesGrid = updateNextPiecesGrid;
     }

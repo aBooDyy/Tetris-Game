@@ -36,9 +36,9 @@ public class Tetris extends Application {
         switchScene(MainWindow.getInstance().getMainWindowScene());
         // Position the MainWindow in the middle of the screen when the window is shown
         primaryStage.sceneProperty().addListener((observable, oldScene, newScene) -> {
-            Rectangle2D screenBounds = Screen.getPrimary().getVisualBounds();
-            primaryStage.setX((screenBounds.getWidth() - primaryStage.getWidth()) / 2);
-            primaryStage.setY((screenBounds.getHeight() - primaryStage.getHeight()) / 2);
+            Rectangle2D screenVisualBounds = Screen.getPrimary().getVisualBounds();
+            primaryStage.setX((screenVisualBounds.getWidth() - primaryStage.getWidth()) / 2);
+            primaryStage.setY((screenVisualBounds.getHeight() - primaryStage.getHeight()) / 2);
         });
         // Sets the window title
         primaryStage.setTitle("Tetris");

@@ -12,7 +12,12 @@ import java.util.List;
 
 public class Utils {
 
-    // get highest point from a list of points, gives the smallest y value of the points in the list
+    /**
+     * Gives the value of the point with the smallest y value from the given points list.
+     *
+     * @param points the list of points to get the highest point from
+     * @return the Y value of the highest point from the given list
+     */
     public static int getHighestPoint(List<Point> points) {
         // a variable of the highest point, by default it is the highest point in the board which is the first row
         int highestPoint = Properties.getHeight()-1;
@@ -26,7 +31,12 @@ public class Utils {
         return highestPoint;
     }
 
-    // get lowest point from a list of points, gives the greatest y value of the points in the list
+    /**
+     * Gives the value of the point with the largest y value from the given points list.
+     *
+     * @param points the list of points to get the lowest point from
+     * @return the Y value of the lowest point from the given list
+     */
     public static int getLowestPoint(List<Point> points) {
         // a variable of the lowest point, by default it is the lowest point in the board which is the last row
         int lowestPoint = 0;
@@ -41,6 +51,13 @@ public class Utils {
         return lowestPoint;
     }
 
+    /**
+     * Combines two given lists of points into the former by duplicating each point
+     * object in the latter.
+     *
+     * @param list the list of points to add to.
+     * @param listToAdd the list of points to be added
+     */
     public static void addDuplicatedPoints(List<Point> list, List<Point> listToAdd) {
         // loop over the list of points to be added
         for (Point point : listToAdd) {
@@ -49,6 +66,13 @@ public class Utils {
         }
     }
 
+    /**
+     * Converts the milliseconds to years, months, days, hours, minutes, and
+     * seconds as needed.
+     *
+     * @param milliseconds the milliseconds value to format
+     * @return the formatted string (X years, X months, X days, X hours, X minutes, X seconds)
+     */
     public static String getFormattedMilliseconds(long milliseconds) {
         String result = "";
 
@@ -81,6 +105,13 @@ public class Utils {
         return result;
     }
 
+    /**
+     * Gives a JavaFX group element which will contain the shade components.
+     *
+     * @param squarePixel the size of the square in the game matrix.
+     * @param isThick if true, it will give a thick shaded cell, if false, the shade will be thin
+     * @return the shaded group component.
+     */
     public static Group getShadedCell(double squarePixel, boolean isThick) {
         double size = isThick ? 5d : 2.5d;
         Group cell = new Group();
@@ -113,6 +144,13 @@ public class Utils {
         return cell;
     }
 
+    /**
+     * Gives a JavaFX group element which will contain the score point shape.
+     *
+     * @param squarePixel the size of the square in the game matrix.
+     * @param score the score that the coin contains.
+     * @return the group component containing the coin shapes.
+     */
     public static Group getCoinShape(double squarePixel, int score) {
         Group cell = new Group();
         StackPane stackPane = new StackPane();

@@ -20,6 +20,12 @@ public class TPiece extends Piece implements Rotatable {
         return 6;
     }
 
+    /**
+     * Rotates each point of the piece 90 degrees about the origin either clockwise or counter-clockwise
+     * according to the given parameter
+     *
+     * @param isClockwise if true, the rotation will be clockwise, if false, the rotation will be counterclockwise
+     */
     @Override
     public void rotate(boolean isClockwise) {
         for (Point point : this.getPoints()) {
